@@ -10,4 +10,20 @@
     <ProjectReference Include="..\BMStore.Domain\BMStore.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="CustomExceptions\" />
+    <Folder Include="Handlers\CommandHandlers\" />
+    <Folder Include="Handlers\QueryHandlers\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.1" />
+    <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+
 </Project>

@@ -1,15 +1,29 @@
+using BMStore.Api;
+using BMStore.Api.Options;
+using BMStore.Application;
+using BMStore.Infrastructure;
+using WatchDog;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
+
+var configuration = builder.Configuration;
+
+var watchDogOptions = configuration.GetSection(nameof(WatchDogOptions)).Get<WatchDogOptions>();
+
+builder.Services.AddInfrastructure(configuration);
+builder.Services.AddApplication();
+
+builder.Services.AddWatchdogLogging(configuration, watchDogOptions);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -21,5 +35,12 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseWatchDogExceptionLogger();
+
+app.UseWatchDog(options => {
+    options.WatchPageUsername = watchDogOptions.WatchPageUsername;
+    options.WatchPagePassword = watchDogOptions.WatchPagePassword;
+});
 
 app.Run();

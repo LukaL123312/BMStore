@@ -21,4 +21,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="HandlerTests\CommandHandlerTests\" />
+    <Folder Include="HandlerTests\QueryHandlerTests\" />
+  </ItemGroup>
+
 </Project>
