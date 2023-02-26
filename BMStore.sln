@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C728CDFE-3EF8-42BC-B0E6-7D8425E6DADF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{998ED123-6771-45F6-AC90-B1360D30F822}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMStore.Api", "src\BMStore.Api\BMStore.Api.csproj", "{F639DB0B-079E-48AB-A547-BD09301A8496}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMStore.Application", "src\BMStore.Application\BMStore.Application.csproj", "{4A763A5D-2287-426A-88BA-68A2F52078C3}"
@@ -14,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMStore.Domain", "src\BMStore.Domain\BMStore.Domain.csproj", "{97CBFAE7-250C-44B5-AE6A-752E8BF77C60}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMStore.Infrastructure", "src\BMStore.Infrastructure\BMStore.Infrastructure.csproj", "{1F4D180C-B171-4F72-9232-A8C784546EDD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D3EDA0D8-6C1D-4145-B187-E3A81A156BAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
