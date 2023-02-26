@@ -16,6 +16,7 @@
     <Folder Include="Handlers\CommandHandlers\" />
     <Folder Include="Handlers\QueryHandlers\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Mapping\" />
     <Folder Include="Queries\" />
   </ItemGroup>
 
