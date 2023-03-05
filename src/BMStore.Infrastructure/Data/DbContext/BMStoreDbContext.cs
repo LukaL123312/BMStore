@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BMStore.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BMStore.Infrastructure.Data.DbContext;
 
@@ -13,5 +14,7 @@ public class BMStoreDbContext : Microsoft.EntityFrameworkCore.DbContext
     {
         base.OnModelCreating(modelBuilder);
     }
+
+    public DbSet<UserEntity> UserEntities { get; set; }
 
 }

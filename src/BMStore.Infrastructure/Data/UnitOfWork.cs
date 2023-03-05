@@ -1,5 +1,7 @@
-﻿using BMStore.Application.Interfaces.IUnitOfWork;
+﻿using BMStore.Application.Interfaces.IRepositories;
+using BMStore.Application.Interfaces.IUnitOfWork;
 using BMStore.Infrastructure.Data.DbContext;
+using BMStore.Infrastructure.Data.Repository;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {
@@ -9,6 +11,8 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
+
+    public IUserRepository UserRepository => new UserRepository(_context);
 
     public async Task<int> SaveChangeAsync()
     {

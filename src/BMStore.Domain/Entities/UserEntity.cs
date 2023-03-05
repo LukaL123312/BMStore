@@ -7,6 +7,5 @@ public record UserEntity
     public string Surname { get; set; }
     public string PhoneNumber { get; set; }
     public string SubDomainName { get; set; }
-    public IReadOnlyCollection<PackageEntity>? Packages { get; set; }
 
 }

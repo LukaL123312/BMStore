@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -11,10 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\" />
     <Folder Include="CustomExceptions\" />
-    <Folder Include="Handlers\CommandHandlers\" />
-    <Folder Include="Handlers\QueryHandlers\" />
     <Folder Include="Helpers\" />
     <Folder Include="Mapping\" />
     <Folder Include="Queries\" />

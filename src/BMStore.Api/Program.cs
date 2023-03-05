@@ -19,6 +19,8 @@ var watchDogOptions = configuration.GetSection(nameof(WatchDogOptions)).Get<Watc
 builder.Services.AddInfrastructure(configuration);
 builder.Services.AddApplication();
 
+builder.Services.AddModelValidation();
+
 builder.Services.AddWatchdogLogging(configuration, watchDogOptions);
 
 var app = builder.Build();
