@@ -10,7 +10,8 @@ namespace BMStore.Api.Controllers;
 [ApiController]
 public class UserController : ControllerBase
 {
-    private readonly IMediator _mediatr;asdsada
+    private readonly IMediator _mediatr;
+
     public UserController(IMediator mediatr)
     {
         _mediatr = mediatr;
