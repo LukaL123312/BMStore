@@ -11,6 +11,7 @@ namespace BMStore.Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediatr;
+
     public UserController(IMediator mediatr)
     {
         _mediatr = mediatr;
