@@ -1,0 +1,16 @@
+name: Greetings
+
+on: [pull_request_target, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "გილოცავ ! შენ BMStore-ის პირველი Issue შექმენი ! BMStore To the Moon 🚀"
+        pr-message: "ეს ერთი და სხვა მრავალი ! 👩‍💻"
