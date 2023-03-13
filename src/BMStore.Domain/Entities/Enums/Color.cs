@@ -4,11 +4,6 @@ using System.Text.Json.Serialization;
 namespace BMStore.Domain.Entities.Enums;
 
 [JsonConverter(typeof(JsonStringEnumMemberConverter))]
-public enum PackagePaymentOption
+public enum Color
 {
-    [EnumMember(Value = "RENT")]
-    Rent,
-
-    [EnumMember(Value = "PURCHASE")]
-    Purchase,
 }
