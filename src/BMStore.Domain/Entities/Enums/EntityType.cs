@@ -9,6 +9,6 @@ public enum EntityType
     [EnumMember(Value= "PHYSICAL")]
     Physical,
 
-    [EnumMember(Value = "PHYSICAL")]
+    [EnumMember(Value = "LEGAL")]
     Legal
 }

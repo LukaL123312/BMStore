@@ -2,7 +2,9 @@
 using BMStore.Application.Commands;
 using BMStore.Application.Queries;
 using FluentValidation;
+using MediatR;
 using WatchDog;
+using static BMStore.Api.Models.Token.Authenticate;
 
 namespace BMStore.Api;
 
@@ -11,6 +13,8 @@ public static class DependencyInjection
     public static IServiceCollection AddModelValidation(this IServiceCollection services)
     {
         services.AddScoped<IValidator<AddUserCommand>, AddUserCommandValidator>();
+
+        services.AddTransient<IRequestHandler<AuthenticateCommand, CommandResponse>, CommandHandler>();
 
         return services;
     }

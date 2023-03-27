@@ -10,7 +10,7 @@ public record UserEntity
     public string SubDomainName { get; init; } = string.Empty;
     public string PhoneNumber { get; init; } = string.Empty;
     public string Email { get; init; } = string.Empty;
-    public IReadOnlyCollection<string>? Addresses { get; init; }
+    public IReadOnlyCollection<AddressEntity>? Addresses { get; init; }
     public IReadOnlyCollection<CommentEntity>? Comments { get; init; }
     public IReadOnlyCollection<PackageEntity>? Cart { get; init; }
     public IReadOnlyCollection<PackageEntity>? OrderedPackages { get; init; }

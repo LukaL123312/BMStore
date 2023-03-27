@@ -7,7 +7,7 @@ public record ProductEntity
     public string Name { get; init; } = string.Empty;
     public string Link { get; init; } = string.Empty;
     public CategoryEntity Category { get; init; }
-    public IReadOnlyCollection<string>? ImageUrls { get; init; }
+    public IReadOnlyCollection<ImageEntity> ImageUrls { get; init; }
     //პროდუქტზე ფოტოს ატვირთვისას უნდა შეეძლეს უკვე ატვირთული(ზოგადად ყველა)
     //ფოტოს ნახვა და იქედან არჩევა და პროდუქტის ფოტოდ დამატება
     public string ShortDescription { get; init; } = string.Empty;
@@ -21,7 +21,7 @@ public record ProductEntity
     public bool IsOnSale { get; init; }
     public TimeSpan SaleDuration { get; init; }
     public IReadOnlyCollection<ProductEntity>? SimilarProducts { get; init; }
-    public IReadOnlyCollection<string>? SearchKeywords { get; init; }
+    public IReadOnlyCollection<KeywordEntity>? SearchKeywords { get; init; }
     public IReadOnlyCollection<CommentEntity>? UserComments { get; init; }
     public decimal UserRating { get; init; }
 }

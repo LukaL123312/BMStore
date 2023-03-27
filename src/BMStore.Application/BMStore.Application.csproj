@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CustomExceptions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Mapping\" />
     <Folder Include="Models\" />

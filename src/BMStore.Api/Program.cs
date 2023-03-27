@@ -2,7 +2,10 @@ using BMStore.Api;
 using BMStore.Api.Options;
 using BMStore.Application;
 using BMStore.Infrastructure;
+using BMStore.Infrastructure.Extensions;
+using System.Reflection;
 using WatchDog;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,8 @@ builder.Services.AddApplication();
 
 builder.Services.AddModelValidation();
 
+//builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
 builder.Services.AddWatchdogLogging(configuration, watchDogOptions);
 
 var app = builder.Build();
@@ -30,9 +35,17 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    app.UseDeveloperExceptionPage();
+
+    // Optional: auto-create and seed Identity DB
+    app.EnsureIdentityDbIsCreated();
+    app.SeedIdentityDataAsync().Wait();
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
@@ -40,7 +53,8 @@ app.MapControllers();
 
 app.UseWatchDogExceptionLogger();
 
-app.UseWatchDog(options => {
+app.UseWatchDog(options =>
+{
     options.WatchPageUsername = watchDogOptions.WatchPageUsername;
     options.WatchPagePassword = watchDogOptions.WatchPagePassword;
 });
