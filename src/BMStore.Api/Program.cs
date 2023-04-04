@@ -6,6 +6,7 @@ using BMStore.Infrastructure.Extensions;
 using System.Reflection;
 using WatchDog;
 using AutoMapper;
+using BMStore.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,8 @@ if (app.Environment.IsDevelopment())
     app.EnsureIdentityDbIsCreated();
     app.SeedIdentityDataAsync().Wait();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -36,7 +36,7 @@ public class TokenService : ITokenService
     {
         if (await IsValidUser(request.Username, request.Password))
         {
-            ApplicationUser user = await GetUserByEmail(request.Username);
+            ApplicationUser user = await GetUserByUserName(request.Username);
 
             if (user != null && user.IsEnabled)
             {
@@ -58,7 +58,7 @@ public class TokenService : ITokenService
 
     private async Task<bool> IsValidUser(string username, string password)
     {
-        ApplicationUser user = await GetUserByEmail(username);
+        ApplicationUser user = await GetUserByUserName(username);
 
         if (user == null)
         {
@@ -74,6 +74,10 @@ public class TokenService : ITokenService
     private async Task<ApplicationUser> GetUserByEmail(string email)
     {
         return await _userManager.FindByEmailAsync(email);
+    }
+    private async Task<ApplicationUser> GetUserByUserName(string userName)
+    {
+        return await _userManager.FindByNameAsync(userName);
     }
 
     private async Task<string> GenerateJwtToken(ApplicationUser user)
