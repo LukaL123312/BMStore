@@ -23,6 +23,8 @@ public class ApplicationDbContextDataSeed
         string adminEmail = "admin@gmail.com";
         var adminUser = new ApplicationUser
         {
+            NormalizedUserName = adminUserName,
+            NormalizedEmail = adminEmail,
             UserName = adminUserName,
             Email = adminEmail,
             IsEnabled = true,
@@ -30,8 +32,13 @@ public class ApplicationDbContextDataSeed
             FirstName = "Admin",
             LastName = "Administrator"
         };
+        //var user = await  userManager.FindByEmailAsync(adminEmail);
 
-        
+        //await userManager.DeleteAsync(user);
+
+
+        var validator = new UserValidator<ApplicationUser>();
+        var validationResults = await validator.ValidateAsync(userManager, adminUser);
 
         // Add new user and their role
         var abc = await userManager.CreateAsync(adminUser, ApplicationIdentityConstants.DefaultPassword);
