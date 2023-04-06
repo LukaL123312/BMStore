@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BMStore.Application\BMStore.Application.csproj" />
-    <ProjectReference Include="..\BMStore.Domain\BMStore.Domain.csproj" />
+    <Compile Remove="Service\**" />
+    <EmbeddedResource Remove="Service\**" />
+    <None Remove="Service\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Service\" />
+    <ProjectReference Include="..\BMStore.Application\BMStore.Application.csproj" />
+    <ProjectReference Include="..\BMStore.Domain\BMStore.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>

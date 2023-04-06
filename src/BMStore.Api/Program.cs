@@ -3,7 +3,7 @@ using BMStore.Api.Options;
 using BMStore.Application;
 using BMStore.Infrastructure;
 using BMStore.Infrastructure.Extensions;
-using System.Reflection;
+
 using WatchDog;
 using AutoMapper;
 using BMStore.Api.Middlewares;

@@ -1,10 +1,13 @@
-﻿using BMStore.Application.Interfaces.IRepositories;
+﻿using BMStore.Application.Interfaces;
+using BMStore.Application.Interfaces.IRepositories;
 using BMStore.Application.Interfaces.IUnitOfWork;
+using BMStore.Application.Models;
+
 using BMStore.Infrastructure.Data.DbContext;
 using BMStore.Infrastructure.Data.Repository;
 using BMStore.Infrastructure.Identity.Models;
-using BMStore.Infrastructure.Identity.Models.Authentication;
 using BMStore.Infrastructure.Identity.Services;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,8 +29,6 @@ public static class DependencyInjection
                 .AddUserManager<UserManager<ApplicationUser>>()
                 .AddSignInManager<SignInManager<ApplicationUser>>();
 
-        services.AddScoped<ITokenService, TokenService>();
-
         services.ConfigureApplicationCookie(options =>
         {
             options.LoginPath = "/Account/Login";
@@ -40,6 +41,9 @@ public static class DependencyInjection
             //options.AddGoogle
             //       .AddFacebook
         });
+
+        services.AddScoped<ITokenService, TokenService>();
+        services.Configure<Token>(configuration.GetSection("Token"));
 
         services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("BmStoreDbConnectionString")));
@@ -64,7 +68,6 @@ public static class DependencyInjection
         services.AddHttpContextAccessor();
 
         // Strongly-typed configurations using IOptions
-        services.Configure<Token>(configuration.GetSection("Token"));
 
         services.Configure<DataProtectionTokenProviderOptions>(options =>
         {

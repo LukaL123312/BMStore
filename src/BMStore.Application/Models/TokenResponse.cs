@@ -1,14 +1,16 @@
-﻿namespace BMStore.Infrastructure.Identity.Models.Authentication;
+﻿using BMStore.Domain.Entities;
+
+namespace BMStore.Application.Models;
 
 public class TokenResponse
 {
-    public TokenResponse(ApplicationUser user,
+    public TokenResponse(UserEntity user,
                          string role,
                          string token
                         //string refreshToken
                         )
     {
-        Id = user.Id;
+        Id = user.IdentityId;
         FullName = user.FullName;
         EmailAddress = user.Email;
         Token = token;

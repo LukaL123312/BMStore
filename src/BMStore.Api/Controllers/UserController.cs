@@ -1,6 +1,8 @@
 ﻿using BMStore.Application.Commands;
 using BMStore.Application.Queries;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace BMStore.Api.Controllers;

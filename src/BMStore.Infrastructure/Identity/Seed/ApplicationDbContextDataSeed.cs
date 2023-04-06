@@ -1,17 +1,12 @@
 ﻿using BMStore.Domain.Constants;
 using BMStore.Infrastructure.Identity.Models;
+
 using Microsoft.AspNetCore.Identity;
 
 namespace BMStore.Infrastructure.Identity.Seed;
 
 public class ApplicationDbContextDataSeed
 {
-    /// <summary>
-    ///     Seed users and roles in the Identity database.
-    /// </summary>
-    /// <param name="userManager">ASP.NET Core Identity User Manager</param>
-    /// <param name="roleManager">ASP.NET Core Identity Role Manager</param>
-    /// <returns></returns>
     public static async Task SeedAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
         // Add roles supported

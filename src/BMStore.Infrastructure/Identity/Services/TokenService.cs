@@ -1,16 +1,19 @@
-﻿using BMStore.Infrastructure.Identity.Models;
-using BMStore.Infrastructure.Identity.Models.Authentication;
+﻿using BMStore.Application.Interfaces;
+using BMStore.Application.Models;
+using BMStore.Domain.Entities;
+using BMStore.Infrastructure.Identity.Models;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace BMStore.Infrastructure.Identity.Services;
 
-/// <inheritdoc cref="ITokenService" />
 public class TokenService : ITokenService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
@@ -18,7 +21,6 @@ public class TokenService : ITokenService
     private readonly Token _token;
     private readonly HttpContext _httpContext;
 
-    /// <inheritdoc cref="ITokenService" />
     public TokenService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
@@ -31,7 +33,6 @@ public class TokenService : ITokenService
         _httpContext = httpContextAccessor.HttpContext;
     }
 
-    /// <inheritdoc cref="ITokenService.Authenticate(TokenRequest, string)"/>
     public async Task<TokenResponse> Authenticate(TokenRequest request, string ipAddress)
     {
         if (await IsValidUser(request.Username, request.Password))
@@ -40,12 +41,18 @@ public class TokenService : ITokenService
 
             if (user != null && user.IsEnabled)
             {
+                var userDto = new UserEntity
+                {
+                    IdentityId = user.Id,
+                    FullName = user.FullName,
+                    Email = user.Email
+                };
                 string role = (await _userManager.GetRolesAsync(user))[0];
                 string jwtToken = await GenerateJwtToken(user);
 
                 await _userManager.UpdateAsync(user);
 
-                return new TokenResponse(user,
+                return new TokenResponse(userDto,
                                          role,
                                          jwtToken
                                          //""//refreshToken.Token

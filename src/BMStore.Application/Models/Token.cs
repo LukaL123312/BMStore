@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BMStore.Infrastructure.Identity.Models.Authentication;
+namespace BMStore.Application.Models;
 
 [JsonObject("Token")]
 public class Token
