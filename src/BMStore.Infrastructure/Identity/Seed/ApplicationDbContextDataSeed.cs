@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BMStore.Infrastructure.Identity.Seed;
 
-public class ApplicationDbContextDataSeed
+public static class ApplicationDbContextDataSeed
 {
     public static async Task SeedAsync(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
     {
@@ -18,26 +18,26 @@ public class ApplicationDbContextDataSeed
         string adminEmail = "admin@gmail.com";
         var adminUser = new ApplicationUser
         {
-            NormalizedUserName = adminUserName,
-            NormalizedEmail = adminEmail,
             UserName = adminUserName,
+            PhoneNumber = "",
+            TwoFactorEnabled = false,
+            PhoneNumberConfirmed = true,
+            LockoutEnabled = false,
+            AuthenticatorKey = "",
+            AccessFailedCount = 0,
             Email = adminEmail,
             IsEnabled = true,
+            IsDeleted = false,
             EmailConfirmed = true,
             FirstName = "Admin",
             LastName = "Administrator"
         };
-        //var user = await  userManager.FindByEmailAsync(adminEmail);
-
-        //await userManager.DeleteAsync(user);
-
-
-        var validator = new UserValidator<ApplicationUser>();
-        var validationResults = await validator.ValidateAsync(userManager, adminUser);
+        var user = await userManager.FindByEmailAsync(adminEmail);
+        await userManager.DeleteAsync(user);
 
         // Add new user and their role
-        var abc = await userManager.CreateAsync(adminUser, ApplicationIdentityConstants.DefaultPassword);
-        //adminUser = await userManager.FindByNameAsync(adminUserName);
+
+        await userManager.CreateAsync(adminUser, ApplicationIdentityConstants.DefaultPassword);
         await userManager.AddToRoleAsync(adminUser, ApplicationIdentityConstants.Roles.Administrator);
     }
 }

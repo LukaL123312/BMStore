@@ -8,10 +8,18 @@ using BMStore.Infrastructure.Data.Repository;
 using BMStore.Infrastructure.Identity.Models;
 using BMStore.Infrastructure.Identity.Services;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using Microsoft.IdentityModel.Tokens;
+
+using System.Text;
 
 namespace BMStore.Infrastructure;
 
@@ -29,20 +37,48 @@ public static class DependencyInjection
                 .AddUserManager<UserManager<ApplicationUser>>()
                 .AddSignInManager<SignInManager<ApplicationUser>>();
 
-        services.ConfigureApplicationCookie(options =>
+        //services.ConfigureApplicationCookie(options =>
+        //{
+        //    options.LoginPath = "/Account/Login";
+        //    options.LogoutPath = "/Account/Logout";
+        //    options.AccessDeniedPath = "/Account/AccessDenied";
+        //});
+
+        services.AddAuthentication()
+            .AddJwtBearer(options =>
+            {
+                Token token = configuration.GetSection("Token").Get<Token>();
+                byte[] secret = Encoding.ASCII.GetBytes(token.Secret);
+
+                options.RequireHttpsMetadata = true;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = token.Issuer,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(secret),
+                    ValidAudience = token.Audience,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            })
+            .AddGoogle(googleOptions =>
+            {
+                googleOptions.ClientId = configuration["Google:ClientId"];
+                googleOptions.ClientSecret = configuration["Google:ClientSecret"];
+                googleOptions.CallbackPath = "/api/auth/signin-google";
+            });
+
+        services.AddAuthorization(options =>
         {
-            options.LoginPath = "/Account/Login";
-            options.LogoutPath = "/Account/Logout";
-            options.AccessDeniedPath = "/Account/AccessDenied";
+            options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build();
         });
 
-        services.AddAuthentication(options =>
-        {
-            //options.AddGoogle
-            //       .AddFacebook
-        });
-
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthService, AuthService>();
         services.Configure<Token>(configuration.GetSection("Token"));
 
         services.AddDbContext<ApplicationDbContext>(options =>

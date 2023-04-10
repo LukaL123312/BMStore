@@ -11,10 +11,10 @@ namespace BMStore.Application.Handlers.CommandHandlers;
 
 public class AuthenticateCommandHandler : IRequestHandler<AuthenticateCommand, AuthenticateCommandResponse>
 {
-    private readonly ITokenService _tokenService;
+    private readonly IAuthService _tokenService;
     private readonly HttpContext _httpContext;
 
-    public AuthenticateCommandHandler(ITokenService tokenService,
+    public AuthenticateCommandHandler(IAuthService tokenService,
                           IHttpContextAccessor httpContextAccessor)
     {
         this._tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));

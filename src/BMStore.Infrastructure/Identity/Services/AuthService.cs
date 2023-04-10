@@ -1,5 +1,6 @@
 ﻿using BMStore.Application.Interfaces;
 using BMStore.Application.Models;
+using BMStore.Domain.Constants;
 using BMStore.Domain.Entities;
 using BMStore.Infrastructure.Identity.Models;
 
@@ -14,14 +15,14 @@ using System.Text;
 
 namespace BMStore.Infrastructure.Identity.Services;
 
-public class TokenService : ITokenService
+public class AuthService : IAuthService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly Token _token;
     private readonly HttpContext _httpContext;
 
-    public TokenService(
+    public AuthService(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         IOptions<Token> tokenOptions,
@@ -41,22 +42,70 @@ public class TokenService : ITokenService
 
             if (user != null && user.IsEnabled)
             {
-                var userDto = new UserEntity
+                return await PrepareJwt(user);
+            }
+        }
+
+        return null;
+    }
+
+    public async Task<TokenResponse> AuthenticateGoogle()
+    {
+        var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
+
+        string loginProvider = externalLoginInfo.LoginProvider;
+        string providerKey = externalLoginInfo.ProviderKey;
+
+        var signInResult = await _signInManager.ExternalLoginSignInAsync(
+            loginProvider,
+            providerKey,
+            isPersistent: false,
+            bypassTwoFactor: true);
+
+        if (signInResult.Succeeded)
+        {
+            var user = await _userManager.FindByLoginAsync(loginProvider, providerKey);
+
+            if (user != null && user.IsEnabled)
+            {
+                return await PrepareJwt(user);
+            }
+        }
+        else
+        {
+            var email = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email);
+            var name = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.GivenName);
+            var surname = externalLoginInfo.Principal.FindFirstValue(ClaimTypes.Surname);
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new ApplicationUser
                 {
-                    IdentityId = user.Id,
-                    FullName = user.FullName,
-                    Email = user.Email
+                    UserName = email,
+                    PhoneNumber = "",
+                    TwoFactorEnabled = false,
+                    PhoneNumberConfirmed = true,
+                    LockoutEnabled = false,
+                    AuthenticatorKey = "",
+                    AccessFailedCount = 0,
+                    Email = email,
+                    IsEnabled = true,
+                    IsDeleted = false,
+                    EmailConfirmed = true,
+                    FirstName = name,
+                    LastName = surname
                 };
-                string role = (await _userManager.GetRolesAsync(user))[0];
-                string jwtToken = await GenerateJwtToken(user);
+            }
 
-                await _userManager.UpdateAsync(user);
+            var identityResult = await _userManager.CreateAsync(user);
+            var identityRoleResult = await _userManager.AddToRoleAsync(user, ApplicationIdentityConstants.Roles.Member);
 
-                return new TokenResponse(userDto,
-                                         role,
-                                         jwtToken
-                                         //""//refreshToken.Token
-                                         );
+            if (identityResult.Succeeded)
+            {
+                await _userManager.AddLoginAsync(user, externalLoginInfo);
+                return await PrepareJwt(user);
             }
         }
 
@@ -82,14 +131,14 @@ public class TokenService : ITokenService
     {
         return await _userManager.FindByEmailAsync(email);
     }
+
     private async Task<ApplicationUser> GetUserByUserName(string userName)
     {
         return await _userManager.FindByNameAsync(userName);
     }
 
-    private async Task<string> GenerateJwtToken(ApplicationUser user)
+    private async Task<string> GenerateJwtToken(ApplicationUser user, string role)
     {
-        string role = (await _userManager.GetRolesAsync(user))[0];
         byte[] secret = Encoding.ASCII.GetBytes(_token.Secret);
 
         JwtSecurityTokenHandler handler = new();
@@ -112,4 +161,25 @@ public class TokenService : ITokenService
         SecurityToken token = handler.CreateToken(descriptor);
         return handler.WriteToken(token);
     }
+
+    private async Task<TokenResponse> PrepareJwt(ApplicationUser user)
+    {
+        var userDto = new UserEntity
+        {
+            IdentityId = user.Id,
+            FullName = user.FullName,
+            Email = user.Email
+        };
+        string role = (await _userManager.GetRolesAsync(user))[0];
+        string jwtToken = await GenerateJwtToken(user, role);
+
+        await _userManager.UpdateAsync(user);
+
+        return new TokenResponse(userDto,
+                                 role,
+                                 jwtToken
+                                 //""//refreshToken.Token
+                                 );
+    }
+
 }

@@ -1,20 +1,19 @@
 using BMStore.Api;
+using BMStore.Api.Middlewares;
 using BMStore.Api.Options;
+
 using BMStore.Application;
+
 using BMStore.Infrastructure;
 using BMStore.Infrastructure.Extensions;
-
 using WatchDog;
-using AutoMapper;
-using BMStore.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger();
 
 var configuration = builder.Configuration;
 
@@ -48,11 +47,15 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
+app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.UseWatchDogExceptionLogger();
 
