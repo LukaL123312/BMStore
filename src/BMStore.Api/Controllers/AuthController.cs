@@ -1,13 +1,10 @@
 ﻿using BMStore.Application.Commands;
 using BMStore.Application.Models;
-using BMStore.Infrastructure.Identity.Models;
+using BMStore.Application.Queries;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BMStore.Api.Controllers;
@@ -17,13 +14,10 @@ namespace BMStore.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public AuthController(IMediator mediator,
-        SignInManager<ApplicationUser> signInManager)
+    public AuthController(IMediator mediator)
     {
         _mediator = mediator;
-        _signInManager = signInManager;
     }
 
     // POST: api/Token/Authenticate
@@ -48,29 +42,24 @@ public class AuthController : ControllerBase
         return Ok("Authorized");
     }
 
+    [AllowAnonymous]
     [HttpGet("google")]
     public async Task<IActionResult> AuthenticateGoogleAsync(string? returnUrl)
     {
-        var provider = GoogleDefaults.AuthenticationScheme;
-        AuthenticationProperties properties = PrepareExternalLoginProperties(provider, returnUrl);
-        return Challenge(properties, provider);
+        var query = new AuthenticateGoogleQuery(returnUrl);
+
+        var result = await _mediator.Send(query);
+
+        return Challenge(result.Properties, result.Provider);
     }
 
-    private AuthenticationProperties PrepareExternalLoginProperties(string provider, string? returnUrl)
-    {
-        //TODO move this somwhere
-        var redirectUrl = $"/api/auth/google-callback?returnUrl={returnUrl}";
-        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-        properties.AllowRefresh = true;
-        return properties;
-    }
-
+    [AllowAnonymous]
     [HttpGet("google-callback")]
-    public async Task<IActionResult> GoogleCallback(string? returnUrl)
+    public async Task<IActionResult> GoogleCallback(CancellationToken cancellationToken)
     {
         var command = new AuthenticateGoogleCommand();
 
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
 
         return Ok(result);
     }

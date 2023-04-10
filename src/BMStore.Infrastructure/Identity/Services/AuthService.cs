@@ -4,12 +4,15 @@ using BMStore.Domain.Constants;
 using BMStore.Domain.Entities;
 using BMStore.Infrastructure.Identity.Models;
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
 
@@ -34,8 +37,10 @@ public class AuthService : IAuthService
         _httpContext = httpContextAccessor.HttpContext;
     }
 
-    public async Task<TokenResponse> Authenticate(TokenRequest request, string ipAddress)
+    public async Task<TokenResponse> AuthenticateAsync(TokenRequest request, string ipAddress, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (await IsValidUser(request.Username, request.Password))
         {
             ApplicationUser user = await GetUserByUserName(request.Username);
@@ -49,9 +54,16 @@ public class AuthService : IAuthService
         return null;
     }
 
-    public async Task<TokenResponse> AuthenticateGoogle()
+    public async Task<TokenResponse> AuthenticateGoogleAsync(CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var externalLoginInfo = await _signInManager.GetExternalLoginInfoAsync();
+
+        if (externalLoginInfo is null)
+        {
+            throw new AuthenticationException("External login was not found.");
+        }
 
         string loginProvider = externalLoginInfo.LoginProvider;
         string providerKey = externalLoginInfo.ProviderKey;
@@ -107,9 +119,23 @@ public class AuthService : IAuthService
                 await _userManager.AddLoginAsync(user, externalLoginInfo);
                 return await PrepareJwt(user);
             }
+            else
+            {
+                throw new AuthenticationException("User entity could not be created.");
+            }
         }
 
         return null;
+    }
+
+    public (AuthenticationProperties, string) PrepareGoogleLoginProperties(string? returnUrl)
+    {
+        var provider = GoogleDefaults.AuthenticationScheme;
+        var redirectUrl = $"/api/auth/google-callback?returnUrl={returnUrl}";
+        var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+        properties.AllowRefresh = true;
+
+        return (properties, provider);
     }
 
     private async Task<bool> IsValidUser(string username, string password)
@@ -118,8 +144,7 @@ public class AuthService : IAuthService
 
         if (user == null)
         {
-            // Username or password was incorrect.
-            return false;
+            throw new AuthenticationException("Password or username was incorrect.");
         }
 
         SignInResult signInResult = await _signInManager.PasswordSignInAsync(user, password, true, false);
@@ -137,7 +162,7 @@ public class AuthService : IAuthService
         return await _userManager.FindByNameAsync(userName);
     }
 
-    private async Task<string> GenerateJwtToken(ApplicationUser user, string role)
+    private string GenerateJwtToken(ApplicationUser user, string role)
     {
         byte[] secret = Encoding.ASCII.GetBytes(_token.Secret);
 
@@ -171,7 +196,7 @@ public class AuthService : IAuthService
             Email = user.Email
         };
         string role = (await _userManager.GetRolesAsync(user))[0];
-        string jwtToken = await GenerateJwtToken(user, role);
+        string jwtToken = GenerateJwtToken(user, role);
 
         await _userManager.UpdateAsync(user);
 

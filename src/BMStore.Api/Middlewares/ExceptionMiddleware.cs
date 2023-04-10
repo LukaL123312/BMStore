@@ -51,6 +51,12 @@ public class ExceptionMiddleware
 
             context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
         }
+        else if (exception is AuthenticationException authenticationException)
+        {
+            errorMessage = ExceptionMessageSetter(errorMessage, authenticationException.Message);
+
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        }
         else
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

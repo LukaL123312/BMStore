@@ -50,6 +50,7 @@ public static class DependencyInjection
                 Token token = configuration.GetSection("Token").Get<Token>();
                 byte[] secret = Encoding.ASCII.GetBytes(token.Secret);
 
+                //TODO: should be commented in development
                 options.RequireHttpsMetadata = true;
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters
