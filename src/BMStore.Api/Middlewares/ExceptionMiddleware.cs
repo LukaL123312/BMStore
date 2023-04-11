@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using BMStore.Application.CustomExceptions;
+using FluentValidation;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -43,6 +44,18 @@ public class ExceptionMiddleware
             }
 
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        }
+        else if (exception is InvalidCredentialsException invalidCredentialsException)
+        {
+            errorMessage = ExceptionMessageSetter(errorMessage, invalidCredentialsException.Message);
+
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        }
+        else if (exception is AuthenticationException authenticationException)
+        {
+            errorMessage = ExceptionMessageSetter(errorMessage, authenticationException.Message);
+
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         }
         else
         {

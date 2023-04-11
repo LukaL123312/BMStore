@@ -4,11 +4,12 @@ namespace BMStore.Domain.Entities;
 
 public record PackageEntity
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public decimal? PackagePrice { get; set; }
-    public PackagePaymentOption PaymentOption { get; set; }
-    public IReadOnlyCollection<UserEntity>? Users { get; set; }
+    public int Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string Description { get; init; } = string.Empty;
+    public decimal? PackagePrice { get; init; }
+    public PackagePaymentOption PaymentOption { get; init; }
+    public LayoutEntity Layout { get; init; }
+    public IReadOnlyCollection<UserEntity>? Users { get; init; }
 
 }
