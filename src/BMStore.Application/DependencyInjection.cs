@@ -1,4 +1,5 @@
-﻿using BMStore.Application.Commands;
+﻿using BMStore.Application.Behaviors;
+using BMStore.Application.Commands;
 using BMStore.Application.Handlers.CommandHandlers;
 
 using FluentValidation;
@@ -16,6 +17,8 @@ public static class DependencyInjection
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
 
         return services;
     }

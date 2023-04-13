@@ -106,8 +106,8 @@ public class AuthService : IAuthService
                     IsEnabled = true,
                     IsDeleted = false,
                     EmailConfirmed = true,
-                    FirstName = name,
-                    LastName = surname
+                    FirstName = name ?? "",
+                    LastName = surname ?? ""
                 };
             }
 
